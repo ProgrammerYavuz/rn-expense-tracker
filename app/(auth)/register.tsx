@@ -1,4 +1,4 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, StyleSheet, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import { colors, spacingX, spacingY } from '@/constants/theme'
@@ -9,6 +9,7 @@ import Input from '@/components/Input'
 import * as Icons from 'phosphor-react-native'
 import Button from '@/components/Button'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@/contexts/authContext'
 
 const Register = () => {
   const emailRef = useRef("");
@@ -16,13 +17,20 @@ const Register = () => {
   const nameRef = useRef("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const {register: registerUser} = useAuth();
 
   const handleSubmit = async () => {
     if(!emailRef.current || !passwordRef.current || !nameRef.current) {
-      Alert.alert("Hata", "Lütfen mail, şifre ve adınızı girin", [{text: "Tamam"}]);
+      Alert.alert("Hata", "Lütfen mail, şifre ve adınızı girin!", [{text: "Tamam"}]);
       return;
     }
     setIsLoading(true);
+    const res = await registerUser(emailRef.current, passwordRef.current, nameRef.current); 
+    setIsLoading(false);
+    console.log('kayıt sonucu:', res);
+    if(!res.success) {
+      Alert.alert("Hata", res.msg, [{text: "Tamam"}]);
+    }
   }
 
   return (
@@ -46,7 +54,8 @@ const Register = () => {
           />
           <Input 
             placeholder='Mail adresinizi girin' 
-            onChangeText={(value) => (emailRef.current = value)}
+            onChangeText={(value) => (emailRef.current = value.toLowerCase())}
+            autoCapitalize='none'
             icon={<Icons.At size={verticalScale(26)} color={colors.neutral300} weight="bold" />}
           />
           <Input 

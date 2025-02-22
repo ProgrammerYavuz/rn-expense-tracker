@@ -5,7 +5,8 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.d.ts"]
     }
   },
   "include": [

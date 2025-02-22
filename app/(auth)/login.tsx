@@ -9,19 +9,26 @@ import Input from '@/components/Input'
 import * as Icons from 'phosphor-react-native'
 import Button from '@/components/Button'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@/contexts/authContext'
 
 const Login = () => {
   const emailRef = useRef("");
   const passwordRef = useRef("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const {login: loginUser} = useAuth();
 
   const handleSubmit = async () => {
     if(!emailRef.current || !passwordRef.current) {
-      Alert.alert("Hata", "Lütfen mail ve şifre girin", [{text: "Tamam"}]);
+      Alert.alert("Hata", "Lütfen mail ve şifre girin!", [{text: "Tamam"}]);
       return;
     }
     setIsLoading(true);
+    const res = await loginUser(emailRef.current, passwordRef.current);
+    setIsLoading(false);
+    if(!res.success) {
+      Alert.alert("Hata", res.msg, [{text: "Tamam"}]);
+    }
   }
 
   return (
@@ -40,7 +47,8 @@ const Login = () => {
           </Typo>
           <Input 
             placeholder='Mail adresinizi girin' 
-            onChangeText={(value) => (emailRef.current = value)}
+            onChangeText={(value) => (emailRef.current = value.toLowerCase())}
+            autoCapitalize='none'
             icon={<Icons.At size={verticalScale(26)} color={colors.neutral300} weight="bold" />}
           />
           <Input 
