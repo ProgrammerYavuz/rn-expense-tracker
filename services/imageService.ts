@@ -21,6 +21,8 @@ export const uploadFileToCloudinary = async (
     folderName: string // Cloudinary'de kaydedilecek klasör adı
 ): Promise<ResponseType> => {
     try {
+        if(!file) return { success: true, data: null };
+
         // Eğer `file` bir URL (string) ise direkt olarak başarılı kabul edilir.
         if(typeof file === 'string'){
             return { success: true, data: file };
@@ -81,4 +83,11 @@ export const getProfileImage = (file: any)=>{
     if(file && typeof file === 'object') return file.uri;
 
     return require('../assets/images/avatarMan.png');
+}
+
+export const getFilePath = (file: any)=>{
+    if(file && typeof file === 'string') return file;
+    if(file && typeof file === 'object') return file.uri;
+
+    return null;
 }
