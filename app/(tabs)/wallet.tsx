@@ -12,6 +12,7 @@ import { WalletType } from '@/types'
 import { orderBy, where } from 'firebase/firestore'
 import Loading from '@/components/Loading'
 import WalletListItem from '@/components/WalletListItem'
+import { formatCurrency } from '@/utils/formatCurrency'
 
 /**
  * Wallet Bileşeni:
@@ -45,7 +46,7 @@ const Wallet = () => {
       <View style={styles.container}>
         <View style={styles.balanceView}>
           <View style={{alignItems: 'center'}}>
-            <Typo size={40} fontWeight='500'>{getTotalBalance()?.toFixed(2)} ₺</Typo>
+          <Typo size={40} fontWeight='500'>{formatCurrency(getTotalBalance(), 'TRY', 2)}</Typo>
             <Typo size={16} color={colors.textLight}>Toplam Bakiye</Typo>
           </View>
         </View>

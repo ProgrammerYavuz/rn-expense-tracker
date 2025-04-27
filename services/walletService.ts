@@ -1,6 +1,6 @@
 import { ResponseType, WalletType } from "@/types";
 import { uploadFileToCloudinary } from "./imageService";
-import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { firestore } from "@/config/firebase";
 
 /**
@@ -77,11 +77,64 @@ export const createOrUpdateWallet = async (
     }
 }
 
+/**
+ * deleteWallet:
+ * - Belirtilen cüzdanı Firestore'dan siler.
+ * - Cüzdanla ilişkili tüm işlemleri de silmek için `deleteTransactionByWalletId` fonksiyonunu çağırır.
+ * 
+ * @param walletId - Silinecek cüzdanın ID'si
+ * @returns `ResponseType` formatında başarı veya hata durumu
+ */
 export const deleteWallet = async (walletId: string): Promise<ResponseType> => { // Cüzdan silme
     try {
-        const walletRef = doc(firestore, "wallets", walletId); // Firestore Referansı
-        await deleteDoc(walletRef); // Cüzdan silinir
+        const walletRef = doc(firestore, "wallets", walletId); // Firestore'dan cüzdan referansı alınır
+        await deleteDoc(walletRef); // Belirtilen cüzdan silinir
+        deleteTransactionByWalletId(walletId); // Cüzdana bağlı tüm işlemler de silinir
         return { success: true, msg: "Cüzdan basarıyla silindi." };
+    } catch (error: any) {
+        console.log("Hata:", error);
+        return { success: false, msg: error.message }
+    }
+}
+
+/**
+ * deleteTransactionByWalletId:
+ * - Belirli bir cüzdana (`walletId`) bağlı olan tüm işlemleri Firestore'dan toplu olarak siler.
+ * - Firestore'un `writeBatch` özelliğini kullanarak işlemleri verimli bir şekilde topluca siler.
+ * - Eğer işlemler çok fazlaysa, `while` döngüsüyle tüm işlemler bitene kadar silme işlemi devam eder.
+ * 
+ * @param walletId - Silinecek işlemlerin bağlı olduğu cüzdanın ID'si
+ * @returns `ResponseType` formatında başarı veya hata durumu
+ */
+export const deleteTransactionByWalletId = async (walletId: string): Promise<ResponseType> => {
+    try {
+        let hasMoreTransactions = true; // Daha fazla işlem olup olmadığını kontrol etmek için
+
+        while (hasMoreTransactions) {
+            const transactionsQuery = query( // Belirli walletId'ye ait işlemler sorgulanır
+                collection(firestore, "transactions"),
+                where("walletId", "==", walletId)
+            );
+
+            // Eğer hiç işlem bulunmazsa döngü sonlandırılır
+            const transactionsSnapshot = await getDocs(transactionsQuery);
+            if (transactionsSnapshot.size == 0) {
+                hasMoreTransactions = false;
+                break;
+            }
+            
+            // İşlemleri toplu silme işlemi için batch oluşturulur
+            const batch = writeBatch(firestore);
+            transactionsSnapshot.forEach((transactionDoc) => {
+                batch.delete(transactionDoc.ref);
+            })
+
+            await batch.commit();
+
+            console.log(`${transactionsSnapshot.size} işlem silindi.`)
+        }
+
+        return { success: true, msg: "Tüm işlemler başarıyla silindi." }
     } catch (error: any) {
         console.log("Hata:", error);
         return { success: false, msg: error.message }
