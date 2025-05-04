@@ -90,7 +90,7 @@ const ProfileModal = () => {
       <View style={styles.container}>
         <Header title="Profilini Düzenle" leftIcon={<BackButton />} style={{marginBottom: spacingY._10}} />
 
-        <ScrollView contentContainerStyle={styles.form}>
+        <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
             <View style={styles.avatarContainer}>
                 <Image
                     style={styles.avatar}

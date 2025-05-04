@@ -100,7 +100,7 @@ const WalletModal = () => {
       <View style={styles.container}>
         <Header title={oldWallet?.id ? "Cüzdanı Düzenle" : "Yeni Cüzdan"} leftIcon={<BackButton />} style={{marginBottom: spacingY._10}} />
 
-        <ScrollView contentContainerStyle={styles.form}>
+        <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
             <View style={styles.inputContainer}>
                 <Typo color={colors.primary} fontWeight='600'>Cüzdan Adı</Typo>
                 <Input 

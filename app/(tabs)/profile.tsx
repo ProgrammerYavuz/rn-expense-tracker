@@ -126,7 +126,7 @@ const Profile = () => {
 
   return (
     <ScreenWrapper>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Header title="Profil" style={{marginVertical: spacingY._10}} />
 
         <View style={styles.userInfo}>

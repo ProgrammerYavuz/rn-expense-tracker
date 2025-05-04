@@ -193,3 +193,8 @@ export type WalletType = {
   uid?: string; // Kullanıcı ID'si
   created?: Date; // Oluşturulma tarihi
 };
+
+// Ay numaralarını Türkçe karşılıklarıyla temsil eden tür
+export type MonthsType = {
+    [key: string]: number;
+};

@@ -232,7 +232,7 @@ const TransactionModal = () => {
                             style={styles.dateInput}
                             onPress={() => setShowDatePicker(true)}
                         >
-                            <Typo size={14}>{(transaction.date as Date).toLocaleDateString()}</Typo>
+                            <Typo size={14}>{(transaction.date as Date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</Typo>
                         </Pressable>
                     )
                 }
@@ -246,6 +246,7 @@ const TransactionModal = () => {
                             mode='date'
                             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                             onChange={onDateChange}
+                            locale='tr-TR'
                         />
                         {
                             Platform.OS === 'ios' && (

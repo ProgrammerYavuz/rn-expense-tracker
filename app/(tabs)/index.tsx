@@ -34,7 +34,7 @@ const Home = () => {
             <Typo size={14} color={colors.neutral400}>Merhaba, </Typo>
             <Typo size={20} color={colors.white} fontWeight='500'>{user?.name}</Typo>
           </View>
-          <TouchableOpacity style={styles.searchIcon}>
+          <TouchableOpacity onPress={() => router.push('/(modals)/searchModal')} style={styles.searchIcon}>
             <Icons.MagnifyingGlass size={verticalScale(22)} color={colors.neutral200} weight='bold' />
           </TouchableOpacity>
         </View>
@@ -47,7 +47,7 @@ const Home = () => {
             <HomeCard />
           </View>
 
-          <TransactionList data={recentTransactions} loading={transactionLoading} emptyListMessage='İşlem kaydınız bulunmamaktadır.' title='Son İşlemler' />
+          <TransactionList data={recentTransactions} loading={transactionLoading} emptyListMessage='İşlem kaydınız bulunmamaktadır.' title='Son 10 İşlem' />
         </ScrollView>
 
         <Button style={styles.floatingButton} onPress={() => router.push('/(modals)/transactionModal')}>
